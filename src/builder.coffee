@@ -44,7 +44,7 @@ class exports.Builder
     render = (element, obj) =>
       if typeof obj isnt 'object'
         # single element, just append it as text
-        if @options.cdata && (@options.force_cdata || requiresCDATA obj)
+        if @options.cdata && (@options.cdataFields || requiresCDATA obj)
           element.raw wrapCDATA obj
         else
           element.txt obj
@@ -64,7 +64,7 @@ class exports.Builder
 
           # Case #2 Char data (CDATA, etc.)
           else if key is charkey
-            if @options.cdata && (@options.force_cdata || requiresCDATA child)
+            if @options.cdata && (key in @options.cdataFields || requiresCDATA child)
               element = element.raw wrapCDATA child
             else
               element = element.txt child
@@ -73,7 +73,7 @@ class exports.Builder
           else if Array.isArray child
             for own index, entry of child
               if typeof entry is 'string'
-                if @options.cdata && (@options.force_cdata || requiresCDATA entry)
+                if @options.cdata && (key in @options.cdataFields || requiresCDATA entry)
                   element = element.ele(key).raw(wrapCDATA entry).up()
                 else
                   element = element.ele(key, entry).up()
@@ -86,7 +86,7 @@ class exports.Builder
 
           # Case #5 String and remaining types
           else
-            if typeof child is 'string' && @options.cdata && (@options.force_cdata || requiresCDATA child)
+            if typeof child is 'string' && @options.cdata && (key in @options.cdataFields || requiresCDATA child)
               element = element.ele(key).raw(wrapCDATA child).up()
             else
               if not child?

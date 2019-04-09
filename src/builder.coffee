@@ -64,7 +64,7 @@ class exports.Builder
 
           # Case #2 Char data (CDATA, etc.)
           else if key is charkey
-            if @options.cdata && (key in @options.cdataFields || requiresCDATA child)
+            if @options.cdata && (@options.cdataFields && key in @options.cdataFields || requiresCDATA child)
               element = element.raw wrapCDATA child
             else
               element = element.txt child
@@ -73,7 +73,7 @@ class exports.Builder
           else if Array.isArray child
             for own index, entry of child
               if typeof entry is 'string'
-                if @options.cdata && (key in @options.cdataFields || requiresCDATA entry)
+                if @options.cdata && (@options.cdataFields && key in @options.cdataFields || requiresCDATA entry)
                   element = element.ele(key).raw(wrapCDATA entry).up()
                 else
                   element = element.ele(key, entry).up()
@@ -86,7 +86,7 @@ class exports.Builder
 
           # Case #5 String and remaining types
           else
-            if typeof child is 'string' && @options.cdata && (key in @options.cdataFields || requiresCDATA child)
+            if typeof child is 'string' && @options.cdata && (@options.cdataFields && key in @options.cdataFields || requiresCDATA child)
               element = element.ele(key).raw(wrapCDATA child).up()
             else
               if not child?
